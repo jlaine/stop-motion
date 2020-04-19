@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import logging
 import os
+import sys
 
 import gphoto2 as gp
 
@@ -13,7 +14,7 @@ output_tpl = 'capt%.4d.jpg'
 
 def next_filename():
     # check existing files
-    filenames = set(os.listdir(output_dir))
+    filenames = frozenset(os.listdir(output_dir))
     counter = 1
     while True:
         filename = output_tpl % counter
@@ -25,9 +26,19 @@ def next_filename():
 def main():
     logging.basicConfig(
         format='%(levelname)s: %(name)s: %(message)s', level=logging.WARNING)
+
+    # create directory
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # open camera
     gp.check_result(gp.use_python_logging())
     camera = gp.check_result(gp.gp_camera_new())
-    gp.check_result(gp.gp_camera_init(camera))
+    try:
+        gp.check_result(gp.gp_camera_init(camera))
+    except gp.GPhoto2Error as exc:
+        logging.warning("Could not open camera: %s", exc)
+        sys.exit(1)
 
     while True:
         try:

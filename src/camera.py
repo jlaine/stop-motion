@@ -1,9 +1,15 @@
 import subprocess
 
 import gphoto2 as gp
+from PySide2.QtCore import QObject, Slot
 
 
-class FfmpegCamera:
+class CameraNotFound(Exception):
+    pass
+
+
+class FfmpegCamera(QObject):
+    @Slot(str)
     def capture(self, path):
         subprocess.check_call(
             [
@@ -24,13 +30,19 @@ class FfmpegCamera:
         pass
 
 
-class Gphoto2Camera:
+class Gphoto2Camera(QObject):
     def __init__(self):
+        super().__init__()
+
         gp.check_result(gp.use_python_logging())
 
-        self._camera = gp.check_result(gp.gp_camera_new())
-        gp.check_result(gp.gp_camera_init(self._camera))
+        try:
+            self._camera = gp.check_result(gp.gp_camera_new())
+            gp.check_result(gp.gp_camera_init(self._camera))
+        except gp.GPhoto2Error:
+            raise CameraNotFound
 
+    @Slot(str)
     def capture(self, path):
         file_path = gp.check_result(
             gp.gp_camera_capture(self._camera, gp.GP_CAPTURE_IMAGE)

@@ -6,7 +6,18 @@ import gphoto2 as gp
 class FfmpegCamera:
     def capture(self, path):
         subprocess.check_call(
-            ["ffmpeg", "-f", "v4l2", "-i", "/dev/video0", "-frames:v", "1", path]
+            [
+                "ffmpeg",
+                "-loglevel",
+                "fatal",
+                "-f",
+                "v4l2",
+                "-i",
+                "/dev/video0",
+                "-frames:v",
+                "1",
+                path,
+            ]
         )
 
     def close(self):

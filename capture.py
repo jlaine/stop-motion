@@ -1,24 +1,9 @@
 #!/usr/bin/env python
 
 import logging
-import os
-import sys
 
 from src.camera import FfmpegCamera, Gphoto2Camera
-
-output_dir = "images"
-output_tpl = "capt%.4d.jpg"
-
-
-def next_filename():
-    # check existing files
-    filenames = frozenset(os.listdir(output_dir))
-    counter = 1
-    while True:
-        filename = output_tpl % counter
-        if filename not in filenames:
-            return os.path.join(output_dir, filename)
-        counter += 1
+from src.timeline import Timeline
 
 
 def main():
@@ -26,11 +11,8 @@ def main():
         format="%(levelname)s: %(name)s: %(message)s", level=logging.INFO
     )
 
-    # create directory
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    camera = Gphoto2Camera()
+    camera = FfmpegCamera()
+    timeline = Timeline(directory="images")
 
     while True:
         try:
@@ -38,7 +20,7 @@ def main():
         except KeyboardInterrupt:
             return
 
-        target = next_filename()
+        target = timeline.next_filename()
         logging.info("Capturing image to %s", target)
         camera.capture(target)
 

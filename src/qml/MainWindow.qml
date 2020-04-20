@@ -14,10 +14,17 @@ ApplicationWindow {
 
             ToolButton {
                 action: capture
+                display: AbstractButton.TextUnderIcon
             }
 
             ToolButton {
                 action: remove
+                display: AbstractButton.TextUnderIcon
+            }
+
+            ToolButton {
+                action: render
+                display: AbstractButton.TextUnderIcon
             }
         }
     }
@@ -28,7 +35,7 @@ ApplicationWindow {
         Image {
             asynchronous: true
             fillMode: Image.PreserveAspectFit
-            source: timeline.items.length ? timeline.items[timeline.items.length - 1].url : ''
+            source: timeline.items.length ? timeline.items[timeline.items.length - 1].url : ""
 
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -49,6 +56,14 @@ ApplicationWindow {
         onTriggered: camera.capture(timeline.nextFilePath)
         shortcut: "Return"
         text: "Capture"
+    }
+
+    Action {
+        id: render
+
+        icon.name: "document-save"
+        onTriggered: timeline.render("preview.mp4")
+        text: "Render"
     }
 
     Action {

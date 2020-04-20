@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 from PySide2.QtCore import Property, QFileSystemWatcher, QObject, QUrl, Signal, Slot
 
@@ -56,6 +57,30 @@ class Timeline(QObject):
     def deleteLast(self):
         if self._filepaths:
             os.unlink(self._filepaths[-1])
+
+    @Slot(str)
+    def render(self, path):
+        subprocess.check_call(
+            [
+                "ffmpeg",
+                "-r",
+                "6",
+                "-i",
+                os.path.join(self._directory, self._template.replace("%.4d", "%04d")),
+                "-vf",
+                "scale=1404:-1",
+                "-pix_fmt",
+                "yuv420p",
+                "-r",
+                "24",
+                "-strict",
+                "-2",
+                "-movflags",
+                "faststart",
+                "-y",
+                path,
+            ]
+        )
 
     @Slot(str)
     def _directoryChanged(self, path):

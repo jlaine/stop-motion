@@ -1,6 +1,9 @@
 Stop-motion animation tools
 ===========================
 
+.. image:: docs/screenshot.png
+   :width: 400
+
 Requirements
 ------------
 

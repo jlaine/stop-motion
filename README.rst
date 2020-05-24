@@ -32,4 +32,4 @@ At any time you can delete the latest captured frame by pressing the "Delete" bu
 or the "Delete" key on your keyboard.
 
 Once you have enough frames you can press the "Render" button which will output a
-video at 5 frames per second.
+video called "output.mp4" at 6 frames per second.

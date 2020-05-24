@@ -1,7 +1,14 @@
 import os
-import subprocess
 
-from PySide2.QtCore import Property, QFileSystemWatcher, QObject, QUrl, Signal, Slot
+from PySide2.QtCore import (
+    Property,
+    QFileSystemWatcher,
+    QObject,
+    QProcess,
+    QUrl,
+    Signal,
+    Slot,
+)
 
 
 class Item(QObject):
@@ -60,9 +67,11 @@ class Timeline(QObject):
 
     @Slot(str)
     def render(self, path):
-        subprocess.check_call(
+        self._renderer = QProcess(self)
+        self._renderer.finished.connect(self._rendererFinished)
+        self._renderer.start(
+            "ffmpeg",
             [
-                "ffmpeg",
                 "-r",
                 "6",
                 "-i",
@@ -79,7 +88,7 @@ class Timeline(QObject):
                 "faststart",
                 "-y",
                 path,
-            ]
+            ],
         )
 
     @Slot(str)
@@ -92,3 +101,8 @@ class Timeline(QObject):
         )
         self._items = [Item(path, parent=self) for path in sorted(self._filepaths)]
         self.changed.emit()
+
+    @Slot(int)
+    def _rendererFinished(self, exitCode):
+        print(self._renderer.readAllStandardError())
+        print("exitCode", exitCode)

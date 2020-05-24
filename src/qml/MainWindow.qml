@@ -62,7 +62,7 @@ ApplicationWindow {
         id: render
 
         icon.name: "document-save"
-        onTriggered: timeline.render("preview.mp4")
+        onTriggered: timeline.render("output.mp4")
         text: "Render"
     }
 

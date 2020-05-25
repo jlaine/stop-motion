@@ -35,14 +35,14 @@ ApplicationWindow {
         Image {
             asynchronous: true
             fillMode: Image.PreserveAspectFit
-            source: timeline.items.length ? timeline.items[timeline.items.length - 1].url : ""
+            source: (timeline && timeline.items.length) ? timeline.items[timeline.items.length - 1].url : ""
 
             Layout.fillHeight: true
             Layout.fillWidth: true
         }
 
         TimelineView {
-            model: timeline.items
+            model: timeline ? timeline.items : null
 
             Layout.fillWidth: true
             Layout.minimumHeight: 200
@@ -55,7 +55,7 @@ ApplicationWindow {
         icon.name: "media-record"
         onTriggered: camera.capture(timeline.nextFilePath)
         shortcut: "Return"
-        text: "Capture"
+        text: qsTr("Capture")
     }
 
     Action {
@@ -63,7 +63,7 @@ ApplicationWindow {
 
         icon.name: "document-save"
         onTriggered: timeline.render("output.mp4")
-        text: "Render"
+        text: qsTr("Render")
     }
 
     Action {
@@ -72,6 +72,6 @@ ApplicationWindow {
         icon.name: "edit-delete"
         onTriggered: timeline.deleteLast()
         shortcut: "Del"
-        text: "Delete"
+        text: qsTr("Delete")
     }
 }
